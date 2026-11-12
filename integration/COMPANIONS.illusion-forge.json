@@ -1,0 +1,12 @@
+{
+  "id": "illusion-forge",
+  "title": "Illusion Forge",
+  "kind": "local-stdio-mcp",
+  "command": ["python", "-m", "illusionforge"],
+  "args": ["mcp"],
+  "env": {
+    "PYTHONPATH": "src",
+    "PYTHONIOENCODING": "utf-8"
+  },
+  "notes": "Run with the working directory set to this forge. This file is a fragment. It does not register itself in another bundle."
+}

@@ -1,0 +1,12 @@
+.venv/
+build/
+local/
+out/
+__pycache__/
+*.pyc
+bin/
+obj/
+illusionforge.local.json
+dist/
+*.user
+.vs/

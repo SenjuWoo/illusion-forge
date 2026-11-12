@@ -1,0 +1,21 @@
+# Decisions
+
+- One Python package and one plugin source. The plugin is compiled twice, once against each game's BepInEx and UnityEngine references. The same IL is used because the plugin does not call game types directly.
+- Cards are edited in memory and written with a temp file plus replace. An unmodified save returns the original bytes. A Koikatsu edit is reserialized by kkloader, so it is checked by reading values back.
+- The maker is driven by reflection on `KKAPI.Maker.MakerAPI` and on the live character object. Slider UI clicks are not used.
+- Refresh calls are limited to `UpdateShapeFaceValueFromCustom` and `UpdateShapeBodyValueFromCustom` when they have zero parameters, plus `ChangeSettingHair` only when that method also has zero parameters. Methods with arguments are reported and not called.
+- The plugin listens on 127.0.0.1 only. JSON is a small reader in the plugin. Newtonsoft.Json is not referenced.
+- Honey Select 2 face names come from `data/hs2_face_sliders.json`, which cites the Facial Data Extractor field order. A local card had 59 face floats. Those names are not applied to Koikatsu, where a local card had 52.
+- Koikatsu body height is index 0 because that is the slot the original character loader writes. No bust index is hardcoded.
+- Clothing words are unmapped. A clothes write needs an integer slot and id. Honey Select 2 outfit blocks stay raw: the Koikatsu coordinate parser raises `UnicodeDecodeError` on a local Honey Select 2 card.
+- The phrase compiler does not call a model. A stronger model may hand in a spec JSON instead.
+- MCP apply cannot set the game-directory override. The CLI can, and only with `--approve-gamedir`.
+- Game utilities are discovered and left where they are. They are not copied into this folder.
+- Indexed character cards stored sex 1 or sex 0 and no other value. The compiler emits 1 for female/woman and 0 for male/man.
+- Words girl, boy, loli, and child do not set the sex byte.
+- "short hair" is not height. The compiler looks at every copy of the phrase and ignores one whose next word is a hair or clothing noun. A comma on that word does not change the decision.
+- Clothing phrases match longest first. A span inside a longer phrase is not listed again. A later separate copy of the shorter phrase is listed once.
+- The plugin accepts numeric face keys only. `prepare_payload` rewrites Honey Select 2 names to indexes so the name table stays in one JSON file.
+- A bridge job has three states: queued, running, dropped. A client timeout drops it only if the main thread has not taken it. Refresh methods run only when the applied field list contains a matching prefix.
+- The character library is the installed `UserData/chara` tree. `make` copies one of those cards and edits the copy. Stock Koikatsu filenames such as Gyaru are personality labels. Honey Select 2 timestamp files are matched by the name stored inside the card. gyaru/gal and ojousama/ojou are search aliases only.
+- An unnamed prompt prefers a card directly in `female` or `male`. A directory named `Old` scores below the current copy. Equal names prefer the newer file, and a longer stored name beats a shorter one contained in the same prompt. A search word that matches nothing returns no card. Height words are removed from that search only after the compiler accepts them as height.

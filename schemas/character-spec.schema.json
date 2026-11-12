@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "illusionforge/character-spec",
+  "title": "IllusionForge character spec",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "game": {"enum": ["kk", "hs2"]},
+    "face_sliders": {"type": "object"},
+    "body_sliders": {"type": "object"},
+    "hair_color": {"type": ["array", "null"], "items": {"type": "number"}, "minItems": 3, "maxItems": 4},
+    "eye_color": {"type": ["array", "null"], "items": {"type": "number"}, "minItems": 3, "maxItems": 4},
+    "eyebrow_color": {"type": ["array", "null"], "items": {"type": "number"}, "minItems": 3, "maxItems": 4},
+    "skin_color": {"type": ["array", "null"], "items": {"type": "number"}, "minItems": 3, "maxItems": 4},
+    "name": {
+      "type": "object",
+      "properties": {
+        "firstname": {"type": "string"},
+        "lastname": {"type": "string"},
+        "nickname": {"type": "string"},
+        "fullname": {"type": "string"}
+      }
+    },
+    "sex": {"type": ["integer", "null"]},
+    "clothes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["slot", "id"],
+        "properties": {"slot": {"type": "integer"}, "id": {"type": "integer"}}
+      }
+    },
+    "unmapped": {"type": "array"},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "description": "face_sliders values are 0..1. Honey Select 2 accepts the names in data/hs2_face_sliders.json. Koikatsu accepts numeric face indexes only. body_sliders.height is Koikatsu shapeValueBody[0]. Other body keys must be numeric indexes. clothes ids are not inferred from words."
+}
