@@ -1,6 +1,6 @@
 # State
 
-- Version 1.0.0.
+- Version 1.0.1.
 - The package reads and writes character cards, compiles a prompt, and searches cards installed with the game.
 - Game folders come from environment variables, `illusionforge.local.json`, or a Steam library.
 - The maker plugin builds against the local game's BepInEx and UnityEngine assemblies. The test suite does not launch the game and does not copy the plugin into it.

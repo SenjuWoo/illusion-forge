@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "illusionforge"
-version = "1.0.0"
+version = "1.0.1"
 description = "Local workbench for Honey Select 2 and Koikatsu character cards and the in-game maker"
 readme = "README.md"
 requires-python = ">=3.10"

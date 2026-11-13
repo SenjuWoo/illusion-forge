@@ -1,5 +1,5 @@
 @echo off
-setlocal
+setlocal EnableExtensions DisableDelayedExpansion
 set "ROOT=%~dp0"
 set "PYTHONPATH=%ROOT%src"
 set "PYTHONIOENCODING=utf-8"

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.1
+
+- `forge.py` started with an interpreter that lacks the card libraries now prints one JSON error naming the missing module and the two ways to fix it, and exits 4. Before, it ended in an import traceback.
+- `forge.cmd`, `START-HERE.bat` and `Run-Tests.bat` pin delayed expansion off, so a folder whose name contains `!` is passed through intact.
+
 ## 1.0.0
 
 - Local CLI and stdio MCP for Koikatsu and Honey Select 2 character cards.

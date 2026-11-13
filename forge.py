@@ -12,7 +12,30 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from illusionforge.cli import main
+
+def _missing_dependency(error: ModuleNotFoundError) -> int:
+    """Say which package is missing and how to get it, as the same JSON every
+    other failure uses, instead of a traceback from deep inside an import."""
+    import json
+
+    print(json.dumps({
+        "ok": False,
+        "error": "missing_dependency",
+        "module": error.name,
+        "interpreter": sys.executable,
+        "fix": [
+            "run forge.cmd, which uses the private environment beside it",
+            "or: python -m pip install -r requirements.txt",
+        ],
+    }, indent=2))
+    return 4
+
 
 if __name__ == "__main__":
+    try:
+        from illusionforge.cli import main
+    except ModuleNotFoundError as error:
+        if (error.name or "").split(".")[0] == "illusionforge":
+            raise
+        raise SystemExit(_missing_dependency(error))
     raise SystemExit(main())

@@ -6,4 +6,4 @@ Debug log: set ILLUSIONFORGE_DEBUG=1. The log file is local/logs/illusionforge.l
 under the forge root.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"

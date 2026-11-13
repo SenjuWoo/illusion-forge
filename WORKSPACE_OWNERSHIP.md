@@ -1,7 +1,7 @@
 # Workspace ownership
 
 - Project root: `.` (this file's directory; one owner shared by every agent).
-- Active source: `.` (Illusion Forge 1.0.0, this directory). No snapshot folders.
+- Active source: `.` (Illusion Forge 1.0.1, this directory). No snapshot folders.
 - Versioning: semver in `VERSION` and `src/illusionforge/__init__.py`. Local only until a remote is requested.
 - Repository: public GitHub remote `origin` at SenjuWoo/illusion-forge. Default branch `main`.
 - Publication intent: public GitHub repository SenjuWoo/illusion-forge, MIT licence. Game installs, local indexes, and `illusionforge.local.json` stay untracked.
