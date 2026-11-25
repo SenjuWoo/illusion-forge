@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.2
+
+- Honey Select 2 eye color now applies. These cards keep the iris color in `pupil[].pupilColor`, not `baseColor`, so `make`, `apply` and the maker plugin used to skip every Honey Select 2 eye color with "pupil baseColor was not on this card". The index and `inspect` now read the same key, and the index format moved to version 2, so run `illusionforge index` once to refresh the cache.
+- A color word is no longer a character name. "blue eyes" used to pick a card named "Blue" as a confident name hit; feature pairs such as "blue eyes" and "big nose" are now left out of the whole-name match. `named "Blue"` still finds that card.
+- README rebuilt with real-run terminal shots and the repository mark (`docs/icon.svg`).
+- The maker plugin changed (eye color fallback), so this release ships `IllusionForge-1.0.2-maker-bridge.zip`. It was compiled for both games and not loaded in a running maker.
+
 ## 1.0.1
 
 - `forge.py` started with an interpreter that lacks the card libraries now prints one JSON error naming the missing module and the two ways to fix it, and exits 4. Before, it ended in an import traceback.

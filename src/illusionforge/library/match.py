@@ -7,6 +7,7 @@ a type. Nothing here writes a file.
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from illusionforge.library.index import tokens
@@ -26,6 +27,16 @@ _FACE_ADJECTIVES = {
     "huge", "thin", "full", "long",
 }
 _FACE_NOUNS = {"face", "eyes", "eye", "nose", "lips", "ears", "ear"}
+_COLOR_NOUNS = {"hair", "eyes", "eye", "skin"}
+
+# "blue eyes" and "big nose" describe the character, not a card. The whole-name
+# match runs on the prompt with these pairs blanked, the same pairs that
+# prompt_tokens drops, so a card named Blue is not a name hit for "blue eyes".
+_FEATURE_PAIR = re.compile(
+    r"(?<!\w)(?:(?:" + "|".join(sorted(map(re.escape, _COLORS), key=len, reverse=True)) + r")\s+(?:"
+    + "|".join(sorted(_COLOR_NOUNS)) + r")|(?:" + "|".join(sorted(_FACE_ADJECTIVES)) + r")\s+(?:"
+    + "|".join(sorted(_FACE_NOUNS)) + r"))(?!\w)"
+)
 
 _STOP = {
     "koikatsu", "koikatu", "honey", "select", "hs2", "honeyselect2",
@@ -53,7 +64,7 @@ def prompt_tokens(prompt: str) -> list[str]:
     while index < len(raw):
         word = raw[index]
         nxt = raw[index + 1] if index + 1 < len(raw) else ""
-        if word in _COLORS and nxt in {"hair", "eyes", "eye", "skin"}:
+        if word in _COLORS and nxt in _COLOR_NOUNS:
             index += 2
             continue
         if word in _FACE_ADJECTIVES and nxt in _FACE_NOUNS:
@@ -72,6 +83,12 @@ def prompt_tokens(prompt: str) -> list[str]:
         if alias and alias not in expanded:
             expanded.append(alias)
     return expanded
+
+
+def name_text(prompt: str) -> str:
+    """Casefolded prompt for whole-name matching, with feature pairs blanked."""
+    text = " ".join(prompt.casefold().split())
+    return _FEATURE_PAIR.sub(" | ", text)
 
 
 def _boundary(char: str) -> bool:
@@ -262,7 +279,7 @@ def rank(
     words = prompt_tokens(prompt)
     if (spec.get("body_sliders") or {}).get("height") is not None:
         words = [word for word in words if word not in _HEIGHT_WORDS]
-    prompt_cf = " ".join(prompt.casefold().split())
+    prompt_cf = name_text(prompt)
     pool = [card for card in cards if card.get("game") == spec["game"]]
     if spec.get("sex") is not None:
         pool = [card for card in pool if card.get("sex") == spec["sex"]]

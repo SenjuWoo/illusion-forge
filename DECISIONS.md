@@ -11,6 +11,8 @@
 - The phrase compiler does not call a model. A stronger model may hand in a spec JSON instead.
 - MCP apply cannot set the game-directory override. The CLI can, and only with `--approve-gamedir`.
 - Game utilities are discovered and left where they are. They are not copied into this folder.
+- Eye color is written to the key the card already has: Koikatsu `pupil[].baseColor`, Honey Select 2 `pupil[].pupilColor`. The index, the card summary, the file edit and the maker plugin all read the same two keys. The index format moved to version 2 so cached Honey Select 2 cards pick up their eye color.
+- Before the whole-name match, color and face-feature pairs ("blue eyes", "blonde hair", "big nose") are blanked from the prompt, the same pairs the search-word list already drops. A card named Blue is then not a name hit for "blue eyes"; `named "Blue"` still is.
 - Indexed character cards stored sex 1 or sex 0 and no other value. The compiler emits 1 for female/woman and 0 for male/man.
 - Words girl, boy, loli, and child do not set the sex byte.
 - "short hair" is not height. The compiler looks at every copy of the phrase and ignores one whose next word is a hair or clothing noun. A comma on that word does not change the decision.

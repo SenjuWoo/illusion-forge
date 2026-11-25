@@ -14,6 +14,8 @@
 - Koikatsu height is body index 0. An out-of-range index does not mark the card dirty.
 - Honey Select 2 coordinate bytes are not parsed as a Koikatsu outfit. Those bytes stay unchanged across a face edit.
 - `make` copies a library card outside the game and leaves the source file's hash unchanged.
+- `make "honey select 2 woman with blue eyes"` writes `pupil[0].pupilColor` and `pupil[1].pupilColor` on the copy of a stock card, and the copy reads back with that eye color (1.0.2).
+- The maker plugin compiles for both games with the `pupilColor` fallback. It has not been loaded in a running maker.
 
 ## Not covered
 

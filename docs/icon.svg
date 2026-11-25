@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- Illusion Forge mark: two character cards, the front one with a bust, and a spark for the prompt. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff6fae"/>
+      <stop offset="1" stop-color="#6b3fd1"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff4fa"/>
+      <stop offset="1" stop-color="#f3dcff"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="url(#bg)"/>
+  <rect x="58" y="52" width="100" height="140" rx="14" fill="#ffffff" fill-opacity="0.28" transform="rotate(-12 108 122)"/>
+  <rect x="92" y="62" width="100" height="140" rx="14" fill="url(#card)" stroke="#2a1030" stroke-opacity="0.15" stroke-width="2" transform="rotate(6 142 132)"/>
+  <g transform="rotate(6 142 132)">
+    <circle cx="142" cy="112" r="22" fill="#ff6fae"/>
+    <path d="M104 186 C106 152 124 140 142 140 C160 140 178 152 180 186 Z" fill="#8a5cf0"/>
+  </g>
+  <path d="M196 40 L203 60 L223 67 L203 74 L196 94 L189 74 L169 67 L189 60 Z" fill="#fff4fa"/>
+</svg>

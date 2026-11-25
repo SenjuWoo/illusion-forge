@@ -123,6 +123,20 @@ class CardTests(unittest.TestCase):
             self.assertAlmostEqual(again["body_shape"][0], 0.4, places=5)
         self.assertEqual(_sha(HS2), before)
 
+    def test_hs2_eye_color_lands_in_pupil_color(self) -> None:
+        if not HS2.is_file():
+            self.skipTest("Honey Select 2 sample card is not installed")
+        before = _sha(HS2)
+        with tempfile.TemporaryDirectory() as tmp:
+            dest = Path(tmp) / "eyes.png"
+            report = apply_to_file(HS2, dest, {"game": "hs2", "eye_color": [0.10, 0.20, 0.70]}, roots=[])
+            eye = [item for item in report["applied"] if item["field"] == "eye_color"]
+            self.assertTrue(eye, report["skipped"])
+            self.assertIn("pupil[0].pupilColor", eye[0]["keys"])
+            again = load_card(dest).summary()
+            self.assertAlmostEqual(again["colors"]["eye"][2], 0.70, places=5)
+        self.assertEqual(_sha(HS2), before)
+
     def test_spec_game_mismatch(self) -> None:
         if not KK.is_file():
             self.skipTest("Koikatsu sample card is not installed")

@@ -24,6 +24,7 @@ namespace IllusionForge
     {
         const int MaxLine = 1024 * 1024;
         static readonly string[] ColorKeys = { "baseColor", "startColor", "endColor", "topColor", "underColor" };
+        static readonly string[] PupilColorKeys = { "baseColor", "pupilColor" };
         static readonly BindingFlags Any = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
 
         readonly ConcurrentQueue<Job> _jobs = new ConcurrentQueue<Job>();
@@ -335,12 +336,19 @@ namespace IllusionForge
             var list = AsList(Member(face, "pupil"));
             if (list.Count == 0 && Member(face, "pupil") != null) list.Add(Member(face, "pupil"));
             var written = new List<object>();
+            // Koikatsu keeps the iris color in pupil[].baseColor, Honey Select 2 in pupil[].pupilColor.
             for (int i = 0; i < list.Count; i++)
             {
-                if (PaintMember(list[i], "baseColor", color, applied, skipped, null))
-                    written.Add("pupil[" + i + "].baseColor");
+                foreach (var key in PupilColorKeys)
+                {
+                    if (PaintMember(list[i], key, color, applied, skipped, null))
+                    {
+                        written.Add("pupil[" + i + "]." + key);
+                        break;
+                    }
+                }
             }
-            if (written.Count == 0) skipped.Add(Map("field", "eye_color", "reason", "pupil baseColor was not found"));
+            if (written.Count == 0) skipped.Add(Map("field", "eye_color", "reason", "no pupil baseColor or pupilColor was found"));
             else applied.Add(Map("field", "eye_color", "keys", written));
         }
 

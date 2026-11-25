@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from illusionforge.cards.edit import eye_color
 from illusionforge.cards.hs2 import Hs2Card
 from illusionforge.cards.kk import KkCard
 from illusionforge.cards.sniff import sniff_bytes
@@ -20,7 +21,8 @@ from illusionforge.discover import discover_games, local_config
 from illusionforge.logutil import debug
 from illusionforge.paths import forge_root
 
-INDEX_VERSION = 1
+# 2: Honey Select 2 eye colour is read from pupil[].pupilColor; older caches lack it.
+INDEX_VERSION = 2
 _TOKEN = re.compile(r"[^\W_]+", re.UNICODE)
 # One process, one parsed catalog. The key is the cache file's size and mtime.
 # Callers must not mutate the returned card dicts.
@@ -101,12 +103,7 @@ def _hair_color(hair: dict[str, Any]) -> Any:
 
 
 def _eye_color(face: dict[str, Any]) -> Any:
-    pupil = face.get("pupil")
-    if isinstance(pupil, list) and pupil and isinstance(pupil[0], dict):
-        return pupil[0].get("baseColor")
-    if isinstance(pupil, dict):
-        return pupil.get("baseColor")
-    return None
+    return eye_color(face)
 
 
 def vanilla_label(path: Path, chara_root: Path) -> str | None:

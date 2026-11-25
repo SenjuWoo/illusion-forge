@@ -8,6 +8,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from illusionforge.cards.edit import apply_spec, eye_color
 from illusionforge.library.index import load_index, record_from_card, vanilla_label
 from illusionforge.library.make import make_from_prompt, spec_on_base
 from illusionforge.library.match import rank
@@ -150,6 +151,66 @@ class RankTests(unittest.TestCase):
         hair = rank("koikatsu short hair", [named, stock], {})
         self.assertIn("short", hair["query"])
         self.assertEqual(hair["hits"][0]["path"], "[Community]/Short.png")
+
+
+    def test_eye_color_word_is_not_a_card_name(self) -> None:
+        # A card named Blue is not what "blue eyes" asks for. The eye color
+        # may still break the tie, but nothing claims a name hit.
+        blue_name = _card(path="blue.png", fullname="Blue", name_tokens=["blue"])
+        blue_eyes = _card(path="eyes.png", fullname="Mio", eye=[0.10, 0.20, 0.70])
+        ranked = rank("koikatsu woman with blue eyes", [blue_name, blue_eyes], {})
+        self.assertEqual(ranked["hits"][0]["path"], "eyes.png")
+        self.assertFalse(ranked["confident"])
+        for hit in ranked["hits"]:
+            self.assertNotIn("card name", hit["reasons"])
+
+    def test_hair_color_word_is_not_a_card_name(self) -> None:
+        blonde = _card(path="blonde.png", fullname="Blonde", hair=[0.05, 0.05, 0.05])
+        ranked = rank("koikatsu woman with blonde hair", [blonde], {})
+        self.assertFalse(ranked["confident"])
+        self.assertNotIn("card name", ranked["hits"][0]["reasons"] if ranked["hits"] else [])
+
+    def test_a_card_named_blue_is_still_found_by_name(self) -> None:
+        blue_name = _card(path="blue.png", fullname="Blue", name_tokens=["blue"])
+        blue_eyes = _card(path="eyes.png", fullname="Mio", eye=[0.10, 0.20, 0.70])
+        ranked = rank('koikatsu woman named "Blue" with blue eyes', [blue_eyes, blue_name], {})
+        self.assertEqual(ranked["hits"][0]["path"], "blue.png")
+        self.assertTrue(ranked["confident"])
+
+
+class EyeColorTests(unittest.TestCase):
+    """Koikatsu keeps the iris color in pupil[].baseColor, Honey Select 2 in pupil[].pupilColor."""
+
+    class _Card:
+        def __init__(self, game: str, pupil: list) -> None:
+            self.game = game
+            self.face = {"pupil": pupil}
+
+        def peek_face(self) -> dict:
+            return self.face
+
+        def edit_face(self) -> dict:
+            return self.face
+
+    def test_hs2_pupil_color_is_painted(self) -> None:
+        card = self._Card("hs2", [{"pupilColor": [0.3, 0.3, 0.3, 1.0], "whiteColor": [0.8, 0.8, 0.8, 1.0]}])
+        report = apply_spec(card, {"game": "hs2", "eye_color": [0.10, 0.20, 0.70]})
+        self.assertEqual(report["applied"][0]["keys"], ["pupil[0].pupilColor"])
+        self.assertEqual(card.face["pupil"][0]["pupilColor"], [0.10, 0.20, 0.70, 1.0])
+        self.assertEqual(card.face["pupil"][0]["whiteColor"], [0.8, 0.8, 0.8, 1.0])
+        self.assertEqual(eye_color(card.face), [0.10, 0.20, 0.70, 1.0])
+
+    def test_kk_base_color_is_painted(self) -> None:
+        card = self._Card("kk", [{"baseColor": [0.3, 0.3, 0.3, 1.0]}, {"baseColor": [0.3, 0.3, 0.3, 1.0]}])
+        report = apply_spec(card, {"game": "kk", "eye_color": [0.10, 0.20, 0.70]})
+        self.assertEqual(report["applied"][0]["keys"], ["pupil[0].baseColor", "pupil[1].baseColor"])
+        self.assertEqual(eye_color(card.face), [0.10, 0.20, 0.70, 1.0])
+
+    def test_a_card_without_either_key_is_skipped(self) -> None:
+        card = self._Card("hs2", [{"whiteColor": [0.8, 0.8, 0.8, 1.0]}])
+        report = apply_spec(card, {"game": "hs2", "eye_color": [0.10, 0.20, 0.70]})
+        self.assertEqual(report["applied"], [])
+        self.assertEqual(report["skipped"][0]["field"], "eye_color")
 
 
 class SpecOnBaseTests(unittest.TestCase):

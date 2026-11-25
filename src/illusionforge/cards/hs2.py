@@ -24,6 +24,7 @@ from illusionforge.cards.binary import (
     write_7bit_string,
     write_byte_string,
 )
+from illusionforge.cards.edit import eye_color
 from illusionforge.cards.sniff import png_end
 from illusionforge.logutil import debug
 from illusionforge.spec.sliders import face_name_index
@@ -170,12 +171,7 @@ class Hs2Card:
         param = self.peek_parameter()
         shape_face = face.get("shapeValueFace") or []
         shape_body = body.get("shapeValueBody") or []
-        pupil = face.get("pupil")
-        eye = None
-        if isinstance(pupil, list) and pupil and isinstance(pupil[0], dict):
-            eye = pupil[0].get("baseColor")
-        elif isinstance(pupil, dict):
-            eye = pupil.get("baseColor")
+        eye = eye_color(face)
         hair_color = None
         parts = hair.get("parts")
         if isinstance(parts, list) and parts and isinstance(parts[0], dict):

@@ -29,6 +29,7 @@ Measured on that card:
 - `sex` was 1
 - `fullname` was present; `nickname` was not
 - skin color field is `skinColor`
+- eye color is `pupil[].pupilColor` (Koikatsu uses `pupil[].baseColor`); `whiteColor` and `blackColor` sit beside it and are not touched
 - hair part colors include `baseColor`, `topColor`, and `underColor`
 - blocks: KKEx, Custom, Coordinate, Parameter, GameInfo, Status, Parameter2, GameInfo2
 - Coordinate's version string is `0.0.0`, and the Koikatsu outfit parser raises `UnicodeDecodeError` on those bytes. The block is copied through.

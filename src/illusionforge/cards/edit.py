@@ -10,6 +10,21 @@ from typing import Any
 
 from illusionforge.logutil import debug
 
+# Iris colour key per game: Koikatsu pupil[].baseColor, Honey Select 2 pupil[].pupilColor.
+EYE_COLOR_KEYS = ("baseColor", "pupilColor")
+
+
+def eye_color(face: Any) -> Any:
+    """The first pupil entry's iris colour, under whichever key the card uses."""
+    pupil = face.get("pupil") if isinstance(face, dict) else None
+    entry = pupil[0] if isinstance(pupil, list) and pupil else pupil
+    if not isinstance(entry, dict):
+        return None
+    for key in EYE_COLOR_KEYS:
+        if isinstance(entry.get(key), list):
+            return entry[key]
+    return None
+
 
 def clamp01(value: float) -> float:
     number = float(value)
@@ -190,17 +205,19 @@ def apply_spec(card: Any, spec: dict[str, Any]) -> dict[str, Any]:
         face = card.peek_face()
         pupil = face.get("pupil") if isinstance(face, dict) else None
         entries = pupil if isinstance(pupil, list) else ([pupil] if isinstance(pupil, dict) else [])
-        if any(isinstance(entry, dict) and isinstance(entry.get("baseColor"), list) for entry in entries):
+        # Koikatsu stores the iris colour as pupil[].baseColor, Honey Select 2 as
+        # pupil[].pupilColor. Paint whichever key the card already carries.
+        if any(isinstance(entry, dict) and any(isinstance(entry.get(key), list) for key in EYE_COLOR_KEYS) for entry in entries):
             written = []
             live = card.edit_face().get("pupil")
             live_entries = live if isinstance(live, list) else ([live] if isinstance(live, dict) else [])
             for index, entry in enumerate(live_entries):
-                if isinstance(entry, dict) and isinstance(entry.get("baseColor"), list):
-                    entry["baseColor"] = list(color)
-                    written.append(f"pupil[{index}].baseColor")
+                if isinstance(entry, dict):
+                    for key in _paint(entry, EYE_COLOR_KEYS, color):
+                        written.append(f"pupil[{index}].{key}")
             applied.append({"field": "eye_color", "keys": written, "value": color})
         else:
-            skipped.append({"field": "eye_color", "reason": "pupil baseColor was not on this card"})
+            skipped.append({"field": "eye_color", "reason": "no pupil baseColor or pupilColor on this card"})
 
     skin_color = spec.get("skin_color")
     if skin_color is not None:
