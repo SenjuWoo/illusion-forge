@@ -28,7 +28,7 @@ maker screenshot. The forge does not ship game files.
 - **Cards read and written safely.** A card is identified from the marker after the PNG `IEND` chunk. Koikatsu cards go through [kkloader](https://pypi.org/project/kkloader/); Honey Select 2 cards through the header described in [docs/CARD-FORMAT.md](docs/CARD-FORMAT.md). Edits are written to a temp file and swapped in, and a load that changes nothing writes the original bytes.
 - **Your own library as the base.** `index` reads every card under the games' `UserData/chara`, and `match` and `make` search it by file name, character name, stock personality, and hair, eye and skin color. A name that is not installed returns no card instead of a random neighbour.
 - **Edits, not resets.** Face phrases are deltas on the chosen card's sliders. Its outfit is kept. Hair, eye, eyebrow and skin colors, Koikatsu height, name and sex are written only when the card has that field.
-- **Game folders stay read-only.** `make` and `apply` refuse a destination inside a game install unless you pass `--approve-gamedir`. The MCP `illusion_apply` tool cannot set that override at all.
+- **Game folders stay read-only.** `make` always refuses a destination inside a game install, and `apply` refuses one unless you pass `--approve-gamedir`. The MCP `illusion_apply` tool cannot set that override at all.
 - **A live maker bridge.** The plugin listens on `127.0.0.1:47331` and applies a spec by reflection while the character maker is open. It is installed only with `install-bridge --approve`.
 - **JSON and MCP.** Every command prints JSON, and `illusionforge mcp` speaks MCP on stdin/stdout with the same operations.
 

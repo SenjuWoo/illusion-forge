@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- README: `make` has no `--approve-gamedir` flag and always refuses a destination inside a game install; only `apply` takes the override.
+
 ## 1.0.2
 
 - Honey Select 2 eye color now applies. These cards keep the iris color in `pupil[].pupilColor`, not `baseColor`, so `make`, `apply` and the maker plugin used to skip every Honey Select 2 eye color with "pupil baseColor was not on this card". The index and `inspect` now read the same key, and the index format moved to version 2, so run `illusionforge index` once to refresh the cache.
